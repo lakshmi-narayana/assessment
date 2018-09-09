@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+        <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    </head>
+   <style type="text/css">
+    .panel-borderless {
+    border: 0;
+    box-shadow: none;
+    }
+    img {
+    width: 75px;
+    height: 75px;
+    
+    }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            $("#searchInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#contentDiv div").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+           
+            var url = "https://api.nytimes.com/svc/topstories/v2/home.json";
+            url += '?' + $.param({'api-key': "d508fadfdd834f57a7eb12b8fa4cc50d"});
+           
+           // alert("URL :" +url)
+            $.ajax({
+                url:url,  
+                method: "GET",
+                error: function() {
+                        console.log("Error");
+                        },
+                success: function(data) {
+                        processData(data);
+                        console.log(data);
+                        }
+        });
+        function formatDate(date) {
+            var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+        function processData(data) {
+          var articleItems = [];
+        
+          for (var i = 0; i < data.results.length; i++) {
+            var section = data.results[i].section;
+            var author = data.results[i].byline;
+            var title = data.results[i].title;
+            var description = data.results[i].abstract;
+            var date = data.results[i].updated_date;
+            var artUrl = data.results[i].url;
+            var img = data.results[i].multimedia[0];
+            var img_src = data.results[i].multimedia[0].url;
+            console.log("Section : "+section);
+        
+            var $author = $('<p class="author" style="text-align:left; font-size: 11px;">' + author + "</p>");
+            var $title = $("<a href=" + artUrl + '><p style="text-align:left; font-size: 14px;">' + title + "</p ></a>");
+            
+           var $img = $("<img src=" + img_src+ ' class="float-left rounded-circle pull-left mr-4">&nbsp;');
+           var $description = $("<a href=" +artUrl +'><p>' + description +"</p></a>");
+           var $date_ = $('<p style="text-align:right;">' + formatDate(date) + "</p>");
+          
+           $(".clearfix").append($img,$title,$author,$date_);
+            
+          }
+        }	
+        
+        });
+        
+        </script>
+    <body>
+         <div class="md-form">
+             <input class="form-control" type="text" id="searchInput" placeholder="Search News from List" aria-label="Search" style="margin-bottom: 15px;">
+        </div>
+                    
+        <div class="clearfix col-md-3 col-xs-12" id="contentDiv">
+                
+        </div>
+    </body>
+</html>
