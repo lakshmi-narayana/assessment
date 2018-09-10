@@ -16,3 +16,12 @@ Design of this Project
 -> use ajax to make api calls to nytimes.
 -> Extract the row data in response.
 
+Test Cases
+-----------
+-> The application should display the most watched news from NyTimes.com ?
+-> First we need to acquire the valid api key to call the news api.
+-> The api key should kind of hash type.
+-> We should pass the api key in url parameter.
+-> The AJAX call should return the JSON format data.
+-> The success data must be held by using DOM operations.
+
